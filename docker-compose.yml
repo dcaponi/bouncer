@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  bouncer:
+    build: .
+    tty: true
+    stdin_open: true
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/bouncer
+    env_file:
+      - .env/dev/database
+      - .env/dev/bouncer
+  database:
+    image: postgres
+    env_file:
+      - .env/dev/database
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis
+
+volumes:
+  db_data:
