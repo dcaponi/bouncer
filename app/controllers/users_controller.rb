@@ -16,7 +16,6 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
-    binding.pry
     if @user.save
       render :show, status: :created, location: @user
     else
