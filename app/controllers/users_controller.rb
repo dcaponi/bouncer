@@ -35,6 +35,7 @@ class UsersController < ApplicationController
 
   # DELETE /users/1
   # DELETE /users/1.json
+  # TODO get rid of this or lock down
   def destroy
     @user.destroy
   end
