@@ -1,6 +1,6 @@
 module JsonWebToken
   extend ActiveSupport::Concern
-  SECRET_KEY = "SuperSecret"
+  SECRET_KEY = ENV['SIGNING_SECRET']
 
   def self.encode(payload, exp = 24.hours.from_now)
     payload[:exp] = exp.to_i

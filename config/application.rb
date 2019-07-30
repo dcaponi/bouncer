@@ -10,7 +10,9 @@ require "action_controller/railtie"
 require "action_mailer/railtie"
 require "action_view/railtie"
 require "action_cable/engine"
+
 require "./lib/middleware/health.rb"
+
 # require "sprockets/railtie"
 # require "rails/test_unit/railtie"
 
@@ -20,6 +22,7 @@ Bundler.require(*Rails.groups)
 
 module Bouncer
   class Application < Rails::Application
+    config.autoload_paths << Rails.root.join('lib')
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
     config.middleware.use Middleware::Health
