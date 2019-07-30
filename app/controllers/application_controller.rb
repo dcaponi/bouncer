@@ -1,4 +1,4 @@
 class ApplicationController < ActionController::API
   include JsonWebToken
-  include ::ActionController::Cookies
+  include ActionController::Cookies
 end
