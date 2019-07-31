@@ -1,19 +1,15 @@
 class TokensController < ApplicationController
+
   def access_token
     @user = User.find_by_email(user_params['email'])
 
     if @user.authenticate(user_params['password'])
       token = JsonWebToken.encode({"id": @user.id})
-      cookies[:login] = {
-        :value => token,
-        :expires => 1.hour.from_now,
-        httponly: true
-      }
+      cookies[:login] = { :value => token, :expires => 1.hour.from_now, httponly: true}
       render json: {username: @user.email}, status: :ok
     else
       render json: {'unauthorized': 'incorrect login credentials'}, status: :unauthorized
     end
-
   end
 
   private

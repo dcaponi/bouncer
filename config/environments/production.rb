@@ -54,11 +54,22 @@ Rails.application.configure do
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "bouncer_#{Rails.env}"
 
-  config.action_mailer.perform_caching = false
+  # SMTP Setup
+  config.action_mailer.smtp_settings = {
+    address:        "smtp.sendgrid.net",
+    port:           587,
+    domain:         "developerdom.com",
+    authentication: :plain,
+    user_name:      'apikey',
+    password:       ENV['EMAIL_KEY']
+  }
 
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
+  # ActionMailer settings
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_url_options = { :host => 'developerdom.com' }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_caching = false
+  config.action_mailer.perform_deliveries = true
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
