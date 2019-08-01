@@ -27,7 +27,7 @@
 /config/master.key
 
 # Ignore env files
-.env/prod
+.env
 
 # Build your own damn gems
 /Gemfile.lock

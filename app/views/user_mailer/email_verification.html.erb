@@ -1,8 +1,15 @@
-Hi <%= @user.email %>,
+Hello!<br><br>
 
-Thank you for signing up! Please confirm you are you by clicking the link below.
+Thank you for signing up for a developerdom.com account!<br>
+Please confirm your email address by clicking the link below.<br><br>
 
 <%=
   link_to "confirm email",
   confirm_email_url(@user, :email_confirm_token => @user.email_confirm_token, :redirect_url => @options[:redirect_url])
-%>
+%><br><br>
+
+Best Wishes and Enjoy!<br><br>
+
+Dominick Caponi<br>
+Software Engineer<br>
+developerdom.com
