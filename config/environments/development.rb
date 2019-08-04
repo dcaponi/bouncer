@@ -45,7 +45,7 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { :host => 'localhost' }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_caching = false
-  config.action_mailer.perform_deliveries = true
+  config.action_mailer.perform_deliveries = false
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
