@@ -11,4 +11,8 @@ class User < ApplicationRecord
   def validate_email
     self.email_confirm_token = nil
   end
+
+  def is_validated_user?
+    self.email_confirm_token.nil?
+  end
 end
