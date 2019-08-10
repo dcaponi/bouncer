@@ -16,13 +16,20 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     redirect_url = params[:user].delete(:redirect_url) || '/'
-    @user = User.new(user_params)
-    if @user.save
-      @user.set_email_confirm_token
-      UserMailer.email_verification( @user, :redirect_url => redirect_url ).deliver_now
+    @user = User.find_by_email(user_params[:email]) || User.new(user_params)
+    if @user.id.nil?
+      if @user.save
+        @user.set_email_confirm_token
+        UserMailer.email_verification( @user, :redirect_url => redirect_url ).deliver_now
 
-      @user.save(validate: false)
-      render json: {user: {id: @user.id, email: @user.email, created_at: @user.created_at}}, status: :created
+        @user.save(validate: false)
+        render json: {user: {id: @user.id, email: @user.email, created_at: @user.created_at}}, status: :created
+      else
+        render json: @user.errors, status: :unprocessable_entity
+      end
+    elsif @user.id && @user.email_confirm_token
+      UserMailer.email_verification( @user, :redirect_url => redirect_url ).deliver_now
+      render json: {user: {id: @user.id, email: @user.email, created_at: @user.created_at}}, status: :ok
     else
       render json: @user.errors, status: :unprocessable_entity
     end
