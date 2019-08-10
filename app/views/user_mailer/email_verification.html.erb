@@ -5,7 +5,7 @@ Please confirm your email address by clicking the link below.<br><br>
 
 <%=
   link_to "confirm email",
-  confirm_email_url(@user, :email_confirm_token => @user.email_confirm_token, :redirect_url => @options[:redirect_url])
+  confirm_email_url(@user, :subdomain => "api.bouncer", :email_confirm_token => @user.email_confirm_token, :redirect_url => @options[:redirect_url])
 %><br><br>
 
 Best Wishes and Enjoy!<br><br>
