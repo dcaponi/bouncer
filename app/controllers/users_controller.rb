@@ -6,7 +6,11 @@ class UsersController < ApplicationController
   end
 
   def show
-    render json: {user: {id: @user.id, name_first: @user.name_first, name_last: @user.name_last, email: @user.email, created_at: @user.created_at}}, status: :created
+    if @user
+      render json: {user: {id: @user.id, name_first: @user.name_first, name_last: @user.name_last, email: @user.email, created_at: @user.created_at, updated_at: @user.updated_at}}, status: :created
+    else
+      render json: {unauthorized: "Invalid or no credentials given"}, status: :unauthorized
+    end
   end
 
   def create
@@ -18,15 +22,19 @@ class UsersController < ApplicationController
         UserMailer.email_verification( @user, :redirect_url => redirect_url ).deliver_now
 
         @user.save(validate: false)
-        render json: {user: {id: @user.id, name_first: @user.name_first, name_last: @user.name_last, email: @user.email, created_at: @user.created_at}}, status: :created
+        render json: {user: {id: @user.id, name_first: @user.name_first, name_last: @user.name_last, email: @user.email, created_at: @user.created_at, updated_at: @user.updated_at}}, status: :created
       else
         render json: @user.errors, status: :unprocessable_entity
       end
     elsif @user.id && @user.email_confirm_token
       UserMailer.email_verification( @user, :redirect_url => redirect_url ).deliver_now
-      render json: {user: {id: @user.id, email: @user.email, created_at: @user.created_at}}, status: :ok
+      render json: {user: {id: @user.id, name_first: @user.name_first, name_last: @user.name_last, email: @user.email, created_at: @user.created_at, updated_at: @user.updated_at}}, status: :ok
     else
-      render json: @user.errors, status: :unprocessable_entity
+      if @user.errors.any?
+        render json: @user.errors, status: :unprocessable_entity
+      else
+        render json: {error: "user already signed up"}, status: 401
+      end
     end
   end
 
@@ -38,12 +46,16 @@ class UsersController < ApplicationController
         redirect_to email_confirm_params[:redirect_url] and return
       end
       if @user.update(user_params)
-        render :show, status: :ok, location: @user
+        render json: {user: {id: @user.id, name_first: @user.name_first, name_last: @user.name_last, email: @user.email, created_at: @user.created_at, updated_at: @user.updated_at}}, status: :ok
       else
         render json: @user.errors, status: :unprocessable_entity
       end
     else
-      render json: {email_confirm_token: "Invalid Email Confirm Token Given"}, status: :bad_request
+      if email_confirm_params[:email_confirm_token]
+        render json: {email_confirm_token: "Invalid Email Confirm Token Given"}, status: :bad_request
+      else
+        render json: {unauthorized: "Invalid or no credentials given"}, status: :unauthorized
+      end
     end
   end
 
@@ -54,7 +66,7 @@ class UsersController < ApplicationController
         @user = User.find_by_email_confirm_token(email_confirm_params[:email_confirm_token])
       else
         user_id = JsonWebToken.decode(cookies[:login])["id"]
-        @user = User.find(user_id)
+        @user = User.find(user_id) unless user_id.nil?
       end
     end
 
@@ -63,6 +75,6 @@ class UsersController < ApplicationController
     end
 
     def user_params
-      params.require(:user).permit(:email, :password, :password_confirmation)
+      params.require(:user).permit(:email, :name_first, :name_last, :profile_pic_url, :password, :password_confirmation)
     end
 end
