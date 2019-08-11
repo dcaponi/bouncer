@@ -10,17 +10,52 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_05_200534) do
+ActiveRecord::Schema.define(version: 2019_08_11_001945) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
+  enable_extension "uuid-ossp"
 
-  create_table "users", force: :cascade do |t|
+  create_table "policies", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "permission"
+    t.uuid "user_id"
+    t.uuid "resource_id"
+    t.uuid "resource_server_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["resource_id"], name: "index_policies_on_resource_id"
+    t.index ["resource_server_id"], name: "index_policies_on_resource_server_id"
+    t.index ["user_id"], name: "index_policies_on_user_id"
+  end
+
+  create_table "resource_servers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "resources", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.uuid "resource_server_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["resource_server_id"], name: "index_resources_on_resource_server_id"
+  end
+
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "email"
+    t.string "name_first"
+    t.string "name_last"
+    t.string "profile_pic_url"
     t.string "password_digest"
     t.string "email_confirm_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "policies", "resource_servers"
+  add_foreign_key "policies", "resources"
+  add_foreign_key "policies", "users"
+  add_foreign_key "resources", "resource_servers"
 end
