@@ -8,8 +8,12 @@ module JsonWebToken
   end
 
   def self.decode(token)
-    decoded = JWT.decode(token, SECRET_KEY)[0]
-    HashWithIndifferentAccess.new decoded
+    begin
+      decoded = JWT.decode(token, SECRET_KEY)[0]
+      HashWithIndifferentAccess.new decoded
+    rescue
+      {error: "not signed in"}
+    end
   end
 
 end
