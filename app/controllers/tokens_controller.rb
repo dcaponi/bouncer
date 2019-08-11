@@ -15,17 +15,12 @@ class TokensController < ApplicationController
         render json: {'unauthorized': 'verify email first'}, status: :unauthorized
       end
     else
-      render json: {'unauthorized': 'user with given email does not exist'}, status: :unauthorized
+      render json: {'unauthorized': 'user with given email does not exist'}, status: 401
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = User.find(params[:email])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
       params.require(:user).permit(:email, :password, :tkn)
     end
