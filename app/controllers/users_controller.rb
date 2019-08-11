@@ -4,12 +4,15 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    @users = User.all
+    # TODO this will be needed if/when the notion of organizations is introduced
   end
 
   # GET /users/1
   # GET /users/1.json
   def show
+    user_id = JsonWebToken.decode(cookies[:login])["id"]
+    @user = User.find(user_id)
+    render json: {user: {id: @user.id, name_first: @user.name_first, name_last: @user.name_last, email: @user.email, created_at: @user.created_at}}, status: :created
   end
 
   # POST /users
@@ -23,7 +26,7 @@ class UsersController < ApplicationController
         UserMailer.email_verification( @user, :redirect_url => redirect_url ).deliver_now
 
         @user.save(validate: false)
-        render json: {user: {id: @user.id, email: @user.email, created_at: @user.created_at}}, status: :created
+        render json: {user: {id: @user.id, name_first: @user.name_first, name_last: @user.name_last, email: @user.email, created_at: @user.created_at}}, status: :created
       else
         render json: @user.errors, status: :unprocessable_entity
       end
