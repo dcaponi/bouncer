@@ -2,8 +2,8 @@ namespace :admin do
 
   desc "Setup Bouncer"
   task :setup_bouncer, [:name] => :environment do |t, args|
-    bouncer = ResourceServer.create(name: "bouncer")
-    bouncer.resources.create(name: "policies")
+    bouncer = ResourceServer.find_or_create_by(name: "bouncer")
+    bouncer.resources.find_or_create_by(name: "policies")
   end
 
   desc "Adds resource server"
@@ -17,14 +17,15 @@ namespace :admin do
     end
   end
 
-  desc "Adds resource to given resource server"
-  task :add_resource, [:name, :rs_name] => :environment do |t, args|
-    rs = ResourceServer.find_by_name(args[:rs_name])
+  desc "Adds resource to given resource server (resource/resource_server)"
+  task :add_resource, [:name] => :environment do |t, args|
+    resource, resource_server = args[:name].split('/')
+    rs = ResourceServer.find_by_name(resource_server)
     if rs
-      rs.resources.create(name: args[:name])
-      puts "successfully added resource #{args[:name]} to #{args[:rs_name]}"
+      rs.resources.create(name: resource)
+      puts "successfully added resource #{resource} to #{resource_server}"
     else
-      puts "#{args[:rs_name]} was not found"
+      puts "#{resource_server} not found"
     end
   end
 
