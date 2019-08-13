@@ -6,7 +6,7 @@ class TokensController < ApplicationController
       if @user.is_validated_user?
         if @user.authenticate(user_params['password'])
           token = JsonWebToken.encode({"id": @user.id})
-          cookies[:login] = { :value => token, :expires => 1.hour.from_now, httponly: true }
+          cookies[:login] = { :value => token, :expires => 1.hour.from_now, :httponly => true, :domain => '.developerdom.com' }
           render json: {username: @user.email}, status: :ok
         else
           render json: {'unauthorized': 'incorrect login credentials'}, status: :unauthorized
