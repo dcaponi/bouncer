@@ -1,0 +1,7 @@
+version: 1
+task_definition:
+  services:
+    fitrep:
+      mem_limit: 0.5GB
+      cpu_limit: 256
+  task_execution_role: ecsTaskExecutionRole
