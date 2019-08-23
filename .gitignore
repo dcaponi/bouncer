@@ -28,3 +28,6 @@
 
 # Ignore env files
 .env/prod
+
+# Build your own damn gems
+/Gemfile.lock
