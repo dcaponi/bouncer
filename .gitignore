@@ -28,6 +28,7 @@
 
 # Ignore env files
 .env
+environments
 
 # Build your own damn gems
 /Gemfile.lock

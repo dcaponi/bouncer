@@ -10,14 +10,18 @@ services:
     volumes:
       - .:/usr/src/bouncer
     env_file:
-      - .env/dev/database
-      - .env/dev/bouncer
+      - environments/dev
+    links:
+      - database
+    network_mode: bridge
+
   database:
     image: postgres
     env_file:
-      - .env/dev/database
+      - environments/dev
     volumes:
       - db_data:/var/lib/postgresql/data
+    network_mode: bridge
 
 volumes:
   db_data:
