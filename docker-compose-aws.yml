@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  bouncer:
+    image: 257884807961.dkr.ecr.us-west-2.amazonaws.com/bouncer:1.9
+    tty: true
+    ports:
+      - "0:3000"
+    env_file:
+      - .env
