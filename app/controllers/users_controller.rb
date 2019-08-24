@@ -43,6 +43,10 @@ class UsersController < ApplicationController
       if email_confirm_params[:email_confirm_token]
         @user.validate_email
         @user.save(validate: false)
+        Rails.logger.info("Redirecting to #{email_confirm_params[:redirect_url]}")
+        token = JsonWebToken.encode({"id": @user.id})
+        domain = ENV['COOKIE_DOMAIN']
+        cookies[:login] = { :value => token, :expires => 1.hour.from_now, :httponly => true, :domain => domain }
         redirect_to email_confirm_params[:redirect_url] and return
       end
       if @user.update(user_params)
