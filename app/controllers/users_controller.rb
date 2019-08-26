@@ -7,7 +7,7 @@ class UsersController < ApplicationController
 
   def show
     if @user
-      render json: {user: {id: @user.id, name_first: @user.name_first, name_last: @user.name_last, email: @user.email, created_at: @user.created_at, updated_at: @user.updated_at}}, status: :created
+      render json: {user: {id: @user.id, name_first: @user.name_first, name_last: @user.name_last, email: @user.email, created_at: @user.created_at, updated_at: @user.updated_at}}, status: :ok
     else
       render json: {unauthorized: "Invalid or no credentials given"}, status: :unauthorized
     end

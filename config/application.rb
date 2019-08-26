@@ -24,6 +24,8 @@ Bundler.require(*Rails.groups)
 module Bouncer
   class Application < Rails::Application
     config.autoload_paths << Rails.root.join('lib')
+    Rails.logger = Logger.new(STDOUT)
+    config.logger = ActiveSupport::Logger.new("log/#{Rails.env}.log")
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
     config.middleware.use Middleware::Health
