@@ -49,10 +49,18 @@ class UsersController < ApplicationController
         cookies[:login] = { :value => token, :expires => 1.hour.from_now, :httponly => true, :domain => domain }
         redirect_to email_confirm_params[:redirect_url] and return
       end
-      if @user.update(user_params)
-        render json: {user: {id: @user.id, name_first: @user.name_first, name_last: @user.name_last, email: @user.email, created_at: @user.created_at, updated_at: @user.updated_at}}, status: :ok
+      if user_params[:password]
+        if @user.authenticate(user_params[:old_password])
+          @user.update(user_params.except(:old_password))
+        else
+          render json: {'unauthorized': 'incorrect login credentials'}, status: :unauthorized
+        end
       else
-        render json: @user.errors, status: :unprocessable_entity
+        if @user.update(user_params)
+          render json: {user: {id: @user.id, name_first: @user.name_first, name_last: @user.name_last, email: @user.email, created_at: @user.created_at, updated_at: @user.updated_at}}, status: :ok
+        else
+          render json: @user.errors, status: :unprocessable_entity
+        end
       end
     else
       if email_confirm_params[:email_confirm_token]
@@ -79,6 +87,6 @@ class UsersController < ApplicationController
     end
 
     def user_params
-      params.require(:user).permit(:email, :name_first, :name_last, :profile_pic_url, :password, :password_confirmation)
+      params.require(:user).permit(:email, :name_first, :name_last, :profile_pic_url, :old_password, :password, :password_confirmation)
     end
 end
