@@ -10,8 +10,7 @@ module Middleware
 
     def _call(env)
       status, headers, body = @app.call(env)
-      return [200, {}, ['']] if status == 404 &&
-        env.fetch('PATH_INFO') == '/health'
+      return [200, {}, ['']] if status == 404 && env.fetch('PATH_INFO') == '/health'
       [status, headers, body]
     ensure
       body.close if body && body.respond_to?(:close) && $!
