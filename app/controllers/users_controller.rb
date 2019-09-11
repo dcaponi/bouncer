@@ -51,7 +51,11 @@ class UsersController < ApplicationController
       end
       if user_params[:password]
         if @user.authenticate(user_params[:old_password])
-          @user.update(user_params.except(:old_password))
+          if @user.update(user_params.except(:old_password))
+            render json: {user: {id: @user.id, name_first: @user.name_first, name_last: @user.name_last, email: @user.email, created_at: @user.created_at, updated_at: @user.updated_at}}, status: :ok
+          else
+            render json: @user.errors, status: :unprocessable_entity
+          end
         else
           render json: {'unauthorized': 'incorrect login credentials'}, status: :unauthorized
         end
